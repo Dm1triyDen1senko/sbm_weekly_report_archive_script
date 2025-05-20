@@ -136,16 +136,16 @@ for title in targets:
 
 targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
 
-wrap_fmt = CellFormat(wrapStrategy='WRAP')
+# wrap_fmt = CellFormat(wrapStrategy='WRAP')
 
-for title in targets:
-    try:
-        ws = sh.worksheet(title)
-    except gspread.exceptions.WorksheetNotFound:
-        print(f"Лист «{title}» не найден — пропускаю")
-        continue
+# for title in targets:
+#     try:
+#         ws = sh.worksheet(title)
+#     except gspread.exceptions.WorksheetNotFound:
+#         print(f"Лист «{title}» не найден — пропускаю")
+#         continue
 
-    format_cell_range(ws, 'A:D', wrap_fmt)
+#     format_cell_range(ws, 'A:D', wrap_fmt)
          
 
 targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
