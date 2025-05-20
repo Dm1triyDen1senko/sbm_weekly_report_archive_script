@@ -266,3 +266,21 @@ for title in targets:
     format_cell_range(ws, rng, fmt)
 
     print(f"На «{title}» строки раскрашены по неделям")
+
+
+from gspread_formatting import set_column_width
+
+# A = 100 px, B = 1700 px, C = 160 px
+COL_WIDTHS = {1: 100, 2: 1700, 3: 160}
+
+for title in ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Лист «{title}» не найден — пропускаю установку ширины")
+        continue
+
+    for idx, width in COL_WIDTHS.items():
+        set_column_width(ws, idx, width)
+
+    print(f"На «{title}» задана ширина столбцов A–C (100 / 1700 / 160)")
