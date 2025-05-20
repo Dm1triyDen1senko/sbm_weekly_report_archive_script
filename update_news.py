@@ -1,4 +1,4 @@
-import json, os, tempfile
+import json, os, tempfile, pathlib
 import pandas as pd, gspread
 
 from google.oauth2.service_account import Credentials
@@ -6,30 +6,18 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 from gspread_formatting import format_cell_range, CellFormat, TextFormat
 
 
-# workflow
+# start of workflow credentials block
 
-key_json = os.environ["GSHEETS_KEY"]        
-with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmp:
-    tmp.write(key_json.encode())
-    KEY_PATH = tmp.name
+ROOT_DIR = pathlib.Path(__file__).resolve().parent      
+KEY_PATH = ROOT_DIR / "service_key.json"               
 
 scope = ["https://www.googleapis.com/auth/spreadsheets",
          "https://www.googleapis.com/auth/drive"]
+
 creds = Credentials.from_service_account_file(KEY_PATH, scopes=scope)
 gc = gspread.authorize(creds)
 
-
-scope = ["https://www.googleapis.com/auth/spreadsheets",
-         "https://www.googleapis.com/auth/drive"]
-
-creds = Credentials.from_service_account_file(
-    "/content/service_key.json",
-    scopes=scope
-)
-
-gc = gspread.authorize(creds)
-
-# end workflow
+# end of workflow credentials block
 
 
 SPREAD_ID = "1SM1IaPZiVGrOwvREzG9nOTEBwLRfdbkVMsbn2Cfw1Jw"           
@@ -159,3 +147,4 @@ for title in targets:
         continue
 
     format_cell_range(ws, 'A:D', wrap_fmt)
+    
