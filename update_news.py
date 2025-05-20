@@ -1,79 +1,151 @@
-import pathlib
-import pandas as pd
-import gspread
+вот мой полный код на текущий момент, он полностью рабочий:
+
+import json, os, tempfile, pathlib
+import pandas as pd, gspread
+
 from google.oauth2.service_account import Credentials
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
-from gspread_formatting import CellFormat, TextFormat, format_cell_range
+from gspread_formatting import format_cell_range, CellFormat, TextFormat
 
-ROOT_DIR = pathlib.Path(__file__).resolve().parent
-KEY_PATH  = ROOT_DIR / "service_key.json"
 
-SCOPES = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
-]
+# start of workflow credentials block
 
-creds = Credentials.from_service_account_file(KEY_PATH, scopes=SCOPES)
-gc    = gspread.authorize(creds)
+ROOT_DIR = pathlib.Path(__file__).resolve().parent      
+KEY_PATH = ROOT_DIR / "service_key.json"               
 
-SPREAD_ID  = "1SM1IaPZiVGrOwvREzG9nOTEBwLRfdbkVMsbn2Cfw1Jw"
-SRC_SHEET  = "Архив новостей (исходный формат)"
-TARGETS    = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+scope = ["https://www.googleapis.com/auth/spreadsheets",
+         "https://www.googleapis.com/auth/drive"]
 
-sh       = gc.open_by_key(SPREAD_ID)
-ws_src   = sh.worksheet(SRC_SHEET)
-df       = get_as_dataframe(ws_src, dtype=str, header=0)
+creds = Credentials.from_service_account_file(KEY_PATH, scopes=scope)
+gc = gspread.authorize(creds)
 
-df["Отметка времени"] = pd.to_datetime(df["Отметка времени"], dayfirst=True, errors="coerce")
-df["Номер недели"]    = df["Отметка времени"].dt.isocalendar().week
+# end of workflow credentials block
 
-system_cols = ["Отметка времени", "Направление", "Номер недели"]
+
+SPREAD_ID = "1SM1IaPZiVGrOwvREzG9nOTEBwLRfdbkVMsbn2Cfw1Jw"           
+SRC_SHEET = "Архив новостей (исходный формат)"
+
+sh   = gc.open_by_key(SPREAD_ID)
+ws   = sh.worksheet(SRC_SHEET)
+df   = get_as_dataframe(ws, dtype=str, header=0)  
+
+df["Отметка времени"] = pd.to_datetime(df["Отметка времени"], dayfirst=True)
+
+df["Неделя"] = df["Отметка времени"].dt.isocalendar().week
+
+
+system_cols = ["Отметка времени", "Направление", "Неделя"]   
 news_cols   = [c for c in df.columns if c not in system_cols]
 
-long_df = (
-    df.melt(
-        id_vars=["Номер недели", "Направление"],
-        value_vars=news_cols,
-        var_name="source_col",
-        value_name="Новость"
-    )
-    .dropna(subset=["Новость"])
+melted = (
+    df.melt(id_vars=["Неделя", "Направление"], value_vars=news_cols, value_name="Новость")
+      .dropna(subset=["Новость"])                    
+      .sort_values(["Неделя", "Новость"])
+      .loc[:, ["Неделя", "Направление", "Новость"]]    
 )
 
-long_df["Статус"] = (
-    long_df["source_col"]
+
+targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+
+for direction in targets:
+    sub = melted[melted["Направление"] == direction].reset_index(drop=True)
+
+    try:
+        w = sh.worksheet(direction)
+        w.clear()
+    except gspread.exceptions.WorksheetNotFound:
+        w = sh.add_worksheet(title=direction, rows="1000", cols="10")
+
+    set_with_dataframe(w, sub, include_index=False, include_column_header=True)
+
+    w.freeze(rows=1)
+
+
+    targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+
+for title in targets:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Лист «{title}» не найден — пропускаю")
+        continue
+
+    header = ws.acell('A1').value
+    if header == "Номер недели":
+        continue
+
+    if header == "Неделя":
+         ws.update_acell('A1', 'Номер недели') 
+    else:
+        print(f"На «{title}» в A1 не «Неделя», а «{header}» — оставил без изменений")
+
+
+id_vars   = ["Неделя", "Направление"]
+value_vars = [c for c in df.columns if c not in ["Отметка времени", "Направление", "Неделя"]]
+
+melted_s = (
+    df.melt(id_vars=id_vars, value_vars=value_vars,
+            var_name="source_col", value_name="Новость")
+      .dropna(subset=["Новость"])
+)
+
+melted_s["Статус"] = (
+    melted_s["source_col"]
       .str.replace(r"Новость\s*-\s*", "", regex=True)
       .str.replace(r"\.\d+$", "", regex=True)
       .str.strip()
 )
 
-long_df = (
-    long_df.loc[:, ["Номер недели", "Направление", "Новость", "Статус"]]
-           .sort_values(["Номер недели", "Новость"])
-           .reset_index(drop=True)
+melted_s = (
+    melted_s.loc[:, ["Неделя", "Направление", "Новость", "Статус"]]
+             .rename(columns={"Неделя": "Номер недели"})
+             .sort_values(["Номер недели", "Новость"])
+             .reset_index(drop=True)
 )
 
-bold_fmt = CellFormat(textFormat=TextFormat(bold=True))
-wrap_fmt = CellFormat(wrapStrategy="WRAP")
+targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
 
-for direction in TARGETS:
-    sub = (
-        long_df[long_df["Направление"] == direction]
-        .drop(columns="Направление")      
-        .reset_index(drop=True)
-    )
+for direction in targets:
+    sub = melted_s[melted_s["Направление"] == direction].reset_index(drop=True)
 
-    if sub.empty:
-        sub = pd.DataFrame(columns=["Номер недели", "Новость", "Статус"])
+    if sub.empty:        
+        sub = pd.DataFrame(columns=["Номер недели", "Направление", "Новость", "Статус"])
 
     try:
-        ws_tgt = sh.worksheet(direction)
-        ws_tgt.clear()
+        w = sh.worksheet(direction)
+        w.clear()
     except gspread.exceptions.WorksheetNotFound:
-        ws_tgt = sh.add_worksheet(title=direction, rows="1000", cols="6")
+        w = sh.add_worksheet(title=direction, rows="1000", cols="6")
 
-    set_with_dataframe(ws_tgt, sub, include_index=False, include_column_header=True)
-    ws_tgt.freeze(rows=1)
+    set_with_dataframe(w, sub, include_index=False, include_column_header=True)
+    w.freeze(rows=1)
 
-    format_cell_range(ws_tgt, "A1:C1", bold_fmt)
-    format_cell_range(ws_tgt, "A:C", wrap_fmt)
+
+targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+
+bold_hdr = CellFormat(textFormat=TextFormat(bold=True))
+
+for title in targets:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Лист «{title}» не найден — пропускаю")
+        continue
+
+    format_cell_range(ws, 'A1:D1', bold_hdr)
+
+
+from gspread_formatting import CellFormat, format_cell_range
+
+targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+
+wrap_fmt = CellFormat(wrapStrategy='WRAP')
+
+for title in targets:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Лист «{title}» не найден — пропускаю")
+        continue
+
+    format_cell_range(ws, 'A:D', wrap_fmt)
