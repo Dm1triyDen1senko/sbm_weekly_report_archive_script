@@ -3,7 +3,7 @@ import pandas as pd, gspread
 
 from google.oauth2.service_account import Credentials
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
-from gspread_formatting import format_cell_range, CellFormat, TextFormat, CellFormat, format_cell_range
+from gspread_formatting import format_cell_range, CellFormat, TextFormat, CellFormat, format_cell_range, Color, format_cell_range, CellFormat
 from gspread.utils import rowcol_to_a1 
 
 
@@ -203,3 +203,48 @@ for title in targets:
         print(f"На «{title}» скрыты столбцы D:{last_col_letter}")
     else:
         print(f"На «{title}» только {total_cols} столбца — скрывать нечего")
+
+
+COLOR_PALETTE = [
+    Color(0.95, 0.95, 0.95),   
+    Color(0.87, 0.94, 0.98),  
+    Color(0.98, 0.90, 0.90),   
+    Color(0.90, 0.96, 0.87),   
+    Color(0.99, 0.95, 0.86),   
+    Color(0.93, 0.88, 0.98),   
+]
+
+targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+
+for title in targets:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Лист «{title}» не найден — пропускаю")
+        continue
+
+    weeks = ws.col_values(1)[1:]
+    if not weeks:
+        print(f"На «{title}» данных нет — пропускаю раскраску")
+        continue
+
+    color_idx   = 0
+    block_start = 2               
+    prev_week   = weeks[0]
+
+    for row_offset, week in enumerate(weeks, start=2):
+        if week != prev_week:
+            block_end = row_offset - 1
+            rng = f"A{block_start}:C{block_end}"
+            fmt = CellFormat(backgroundColor=COLOR_PALETTE[color_idx])
+            format_cell_range(ws, rng, fmt)
+
+            block_start = row_offset
+            prev_week   = week
+            color_idx   = (color_idx + 1) % len(COLOR_PALETTE)
+
+    rng = f"A{block_start}:C{len(weeks) + 1}"
+    fmt = CellFormat(backgroundColor=COLOR_PALETTE[color_idx])
+    format_cell_range(ws, rng, fmt)
+
+    print(f"На «{title}» строки раскрашены по неделям")
