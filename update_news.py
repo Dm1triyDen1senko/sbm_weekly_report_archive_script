@@ -168,3 +168,18 @@ for title in targets:
 
     ws.delete_columns(col_idx)
     print(f"На «{title}» удалён столбец «Направление» (№{col_idx})")
+
+
+targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+
+for title in targets:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Лист «{title}» не найден — пропускаю")
+        continue
+
+    total_cols = len(ws.row_values(1))  
+
+    for col in range(total_cols, 3, -1): 
+        ws.delete_columns(col)
