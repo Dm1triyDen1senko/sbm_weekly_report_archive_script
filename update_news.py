@@ -3,7 +3,7 @@ import pandas as pd, gspread
 
 from google.oauth2.service_account import Credentials
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
-from gspread_formatting import format_cell_range, CellFormat, TextFormat
+from gspread_formatting import format_cell_range, CellFormat, TextFormat, CellFormat, format_cell_range
 
 
 # start of workflow credentials block
@@ -131,9 +131,7 @@ for title in targets:
         continue
 
     format_cell_range(ws, 'A1:D1', bold_hdr)
-
-
-from gspread_formatting import CellFormat, format_cell_range
+ 
 
 targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
 
@@ -183,3 +181,24 @@ for title in targets:
 
     for col in range(total_cols, 3, -1): 
         ws.delete_columns(col)
+
+
+targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+
+for title in targets:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Лист «{title}» не найден — пропускаю")
+        continue
+
+    total_cols = ws.col_count         
+
+    ws.unhide_columns(1, total_cols)
+
+    if total_cols > 3:
+        ws.hide_columns(4, total_cols)
+        last_col_letter = rowcol_to_a1(1, total_cols)[:-1]  
+        print(f"На «{title}» скрыты столбцы D:{last_col_letter}")
+    else:
+        print(f"На «{title}» только {total_cols} столбца — скрывать нечего")
