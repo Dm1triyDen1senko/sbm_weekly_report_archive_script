@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "polar-elf-435314-n4",
+  "private_key_id": "df3fea85ee8be3a7ff64e3b1a55c4cd402516f3c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDTluzeHP+jo4OA\nq0tU4sM8fc5LbMCrVs+zXmV83UYuaYdVc7ArdBsJrVisU7HMQgh26m7fs6/j2dNc\n2XNmvVhAZDoJaxzj1n95GXlABRgPQ2xG7OnqKT9AGTkt+z6HLYcdkMAvX+g9HsIH\nHf+bgAOIL+gkJr5IpBJ9X+jT3DLCJjsSw8oP1HWVhJG1tcRoVyrlo9hMlV5KJoN2\nRWUXNPNRTZFC/NPg+yZ0aefulHC7/yNUWDlASd5xTm7oZlweYPJleSitly0GJLwq\nAAO4+xjgzhNJMeETwLvhscv6UkyjMkNW3TvSUpxb+ZujhWD7Oh3sEcyUFtgWcXaQ\nFCV3y0J5AgMBAAECggEAAPdVNQ1uWGWwfceqdCSF7jKH3N3OAmpG0AOcFIYhIiie\nstPwp74jundVapIGQ4/AoKRg5boZEUIHHksq5Prz2nVqs2zPCLZLxjaI0HNFgRpW\ndftydPyDuqvy0CQvzKe3UHn++qhmM9M+YRBwwJnEylwno/SeVVAUeoiT1FXS0IKg\njc9xWg1D7UJSgRj7mcI28VCNOzIfSaAoyYQQMMGuTI+8RpiWd/0vSWPl18SYu5rH\neKv8WVLAW4N5ks9KkttRawhGoRfzQhC04103Q0wPeDfkRLgDIY/iNXs+WeAP/126\nrdj+6ZvlB4wIz6zXslt5f2yNF4ATCkdUGBwBkM4WgQKBgQDo9NoL1EcOY6Q2iJPe\nFYl7/u8leV280mwvBKAiK/EpMeMhFo8VQGnuX87JBtJuE4JJNTufIoOWMrJuyly3\nSnokIciW4oa4Zb44mtErfAcvdFiWJM0nEhUGOKFD58HwD9i4lxJZ3IhX0APqIhV8\nCaRDnWhPG7Uc8Fa5coaaW6jZwQKBgQDohQAPgdCTcdLe/M8tVb3mDdk7D6dItt1D\n04LdsyCq55ES231NNiTEGZS4G1oR4m+G+AK0zKH74YGexxvsIg5ZnthssR5FInZh\nR6l/C0XPF+LJZgZTSU3NuqR1JocPbigZjBnKjxWlDRTTVNIrWWDv/qI0f0wYhWNZ\nSs6flsNmuQKBgCHak2Vsr/bTXCXgqzx2/MfcQHy9qnWqTrZ2gZ71q9JEwbEpShnY\nhoxxt+dW6nW8uA5TghqaNW06aNvY5KhuVlmx3yiuOs3JW192gDdFivXGfqkzJ+0p\nn4yL5kOsBm8QnnoU2kHc3qOEQ01fLqgb7pc05Ne6OxO9iZzhm9YKw/sBAoGARxNI\ntnTHDhsQC2uZ5NC90JHRIlWhm/+R2UbRTPWRecx5Mxt2zOBNEsiDBlgOC0N9NfOf\n2CZpKXaAScmxRlgOrOR6YZcumpFzQD9Il3YZq7kwcMHIEzNoHgf8d3cEd/oDNfP2\nek2MnzxFbmgSKoASuqnKaWO0HhbADK5qRKwwJLkCgYEAu6/oMVwlnrIoHBr9q2S3\nBWhz593cfnQQuy+bIFTZbvY3RuAipAarD8wz5F7/6md7C4RcdI4+rI1IQzPV6xN2\nQmag/t5MXyQQvjg80IewaB/NfEhhVBeew7SBnP1+ysNVP3KqVgskGzF+HjhtJZUg\n9vZ+qi6NROCWKglAg5IN/44=\n-----END PRIVATE KEY-----\n",
+  "client_email": "sbm-weekly-report@polar-elf-435314-n4.iam.gserviceaccount.com",
+  "client_id": "102679759955586530646",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sbm-weekly-report%40polar-elf-435314-n4.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
