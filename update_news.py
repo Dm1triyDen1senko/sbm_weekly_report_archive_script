@@ -1,5 +1,3 @@
-вот мой полный код на текущий момент, он полностью рабочий:
-
 import json, os, tempfile, pathlib
 import pandas as pd, gspread
 
