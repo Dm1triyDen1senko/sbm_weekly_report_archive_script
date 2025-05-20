@@ -17,6 +17,9 @@ from gspread_formatting import (
     set_column_width,
 )
 
+
+# block of workflow credentials - github actions
+
 ROOT_DIR = pathlib.Path(__file__).resolve().parent
 KEY_PATH = ROOT_DIR / "service_key.json"
 
@@ -24,6 +27,8 @@ SCOPES = (
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive",
 )
+
+# end of github-credentials block
 
 SPREAD_ID = "1SM1IaPZiVGrOwvREzG9nOTEBwLRfdbkVMsbn2Cfw1Jw"
 SRC_SHEET = "Архив новостей (исходный формат)"
