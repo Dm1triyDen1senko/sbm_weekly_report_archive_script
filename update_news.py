@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 import pathlib
 import time
 import gspread
 import pandas as pd
 
 from typing import List
-from __future__ import annotations
 from google.oauth2.service_account import Credentials
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 from gspread.utils import rowcol_to_a1
