@@ -3,7 +3,7 @@ import pandas as pd, gspread
 
 from google.oauth2.service_account import Credentials
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
-from gspread_formatting import format_cell_range, CellFormat, TextFormat, CellFormat, format_cell_range, Color, format_cell_range, CellFormat
+from gspread_formatting import format_cell_range, CellFormat, TextFormat, CellFormat, format_cell_range, Color, format_cell_range, CellFormat, set_column_width
 from gspread.utils import rowcol_to_a1 
 
 
