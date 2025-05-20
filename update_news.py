@@ -146,6 +146,24 @@ for title in targets:
 #         continue
 
 #     format_cell_range(ws, 'A:D', wrap_fmt)
+
+# -------------------------------------------------- отключить перенос строк
+NO_WRAP_FMT = CellFormat(wrapStrategy='OVERFLOW_CELL')   # или 'CLIP'
+
+for title in targets:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        continue
+
+    # сколько реально видимых столбцов осталось?
+    col_count = len(ws.row_values(1))        # строка-заголовок
+    last_col  = rowcol_to_a1(1, col_count)[:-1]   # «C» → последняя буква
+
+    rng = f"A:{last_col}"                    # весь диапазон A…последний
+    format_cell_range(ws, rng, NO_WRAP_FMT)
+
+    print(f"На «{title}» перенос строк отключён (wrapStrategy={NO_WRAP_FMT.wrapStrategy})")
          
 
 targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
