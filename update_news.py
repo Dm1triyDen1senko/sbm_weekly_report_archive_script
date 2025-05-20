@@ -7,7 +7,7 @@ from gspread_formatting import format_cell_range, CellFormat, TextFormat, CellFo
 from gspread.utils import rowcol_to_a1 
 
 
-# start of workflow credentials block
+# start of workflow credentials block - github
 
 ROOT_DIR = pathlib.Path(__file__).resolve().parent      
 KEY_PATH = ROOT_DIR / "service_key.json"               
@@ -18,7 +18,7 @@ scope = ["https://www.googleapis.com/auth/spreadsheets",
 creds = Credentials.from_service_account_file(KEY_PATH, scopes=scope)
 gc = gspread.authorize(creds)
 
-# end of workflow credentials block
+# end of workflow credentials block - github
 
 
 SPREAD_ID = "1SM1IaPZiVGrOwvREzG9nOTEBwLRfdbkVMsbn2Cfw1Jw"           
@@ -132,23 +132,9 @@ for title in targets:
         continue
 
     format_cell_range(ws, 'A1:D1', bold_hdr)
- 
 
-# targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
 
-# wrap_fmt = CellFormat(wrapStrategy='WRAP')
-
-# for title in targets:
-#     try:
-#         ws = sh.worksheet(title)
-#     except gspread.exceptions.WorksheetNotFound:
-#         print(f"Лист «{title}» не найден — пропускаю")
-#         continue
-
-#     format_cell_range(ws, 'A:D', wrap_fmt)
-
-# -------------------------------------------------- отключить перенос строк
-NO_WRAP_FMT = CellFormat(wrapStrategy='OVERFLOW_CELL')   # или 'CLIP'
+NO_WRAP_FMT = CellFormat(wrapStrategy='OVERFLOW_CELL')   
 
 for title in targets:
     try:
@@ -156,11 +142,10 @@ for title in targets:
     except gspread.exceptions.WorksheetNotFound:
         continue
 
-    # сколько реально видимых столбцов осталось?
-    col_count = len(ws.row_values(1))        # строка-заголовок
-    last_col  = rowcol_to_a1(1, col_count)[:-1]   # «C» → последняя буква
+    col_count = len(ws.row_values(1))       
+    last_col  = rowcol_to_a1(1, col_count)[:-1]   
 
-    rng = f"A:{last_col}"                    # весь диапазон A…последний
+    rng = f"A:{last_col}"                    
     format_cell_range(ws, rng, NO_WRAP_FMT)
 
     print(f"На «{title}» перенос строк отключён (wrapStrategy={NO_WRAP_FMT.wrapStrategy})")
@@ -265,18 +250,11 @@ for title in targets:
     fmt = CellFormat(backgroundColor=COLOR_PALETTE[color_idx])
     format_cell_range(ws, rng, fmt)
 
-    print(f"На «{title}» строки раскрашены по неделям")
 
-
-# -------------------------------------------------- задать ширину столбцов
-from gspread_formatting import set_column_width
-from gspread.utils import rowcol_to_a1   # уже импортирован выше, но на всякий случай
-
-# ширина в пикселях
 COL_WIDTHS = {
-    1: 100,     # A
-    2: 1700,    # B
-    3: 160,     # C
+    1: 100,     
+    2: 1700,    
+    3: 160,     
 }
 
 for title in ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]:
@@ -287,7 +265,5 @@ for title in ["M2M", "UC", "Связь для бизнеса", "Конверге
         continue
 
     for idx, width in COL_WIDTHS.items():
-        col_letter = rowcol_to_a1(1, idx)[:-1]   # 1→"A", 2→"B" …
+        col_letter = rowcol_to_a1(1, idx)[:-1]   
         set_column_width(ws, col_letter, width)
-
-    print(f"На «{title}» задана ширина столбцов A–C (100 / 1700 / 160)")
