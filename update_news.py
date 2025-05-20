@@ -268,10 +268,16 @@ for title in targets:
     print(f"На «{title}» строки раскрашены по неделям")
 
 
+# -------------------------------------------------- задать ширину столбцов
 from gspread_formatting import set_column_width
+from gspread.utils import rowcol_to_a1   # уже импортирован выше, но на всякий случай
 
-# A = 100 px, B = 1700 px, C = 160 px
-COL_WIDTHS = {1: 100, 2: 1700, 3: 160}
+# ширина в пикселях
+COL_WIDTHS = {
+    1: 100,     # A
+    2: 1700,    # B
+    3: 160,     # C
+}
 
 for title in ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]:
     try:
@@ -281,6 +287,7 @@ for title in ["M2M", "UC", "Связь для бизнеса", "Конверге
         continue
 
     for idx, width in COL_WIDTHS.items():
-        set_column_width(ws, idx, width)
+        col_letter = rowcol_to_a1(1, idx)[:-1]   # 1→"A", 2→"B" …
+        set_column_width(ws, col_letter, width)
 
     print(f"На «{title}» задана ширина столбцов A–C (100 / 1700 / 160)")
