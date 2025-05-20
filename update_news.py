@@ -134,7 +134,7 @@ for title in targets:
     format_cell_range(ws, 'A1:D1', bold_hdr)
  
 
-targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+# targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
 
 # wrap_fmt = CellFormat(wrapStrategy='WRAP')
 
