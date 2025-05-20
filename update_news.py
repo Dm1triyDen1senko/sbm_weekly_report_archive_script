@@ -132,16 +132,14 @@ for direction in TARGET_SHEETS:
 
     weeks_series = sheet_df["Номер недели"] if not sheet_df.empty else pd.Series(dtype=int)
 
-    with batch_updater(sh) as batch:
-        w = batch.worksheet(direction)
-
-        format_cell_range(w, "A1:C1", BOLD_HDR)
-        format_cell_range(w, "A:C", NO_WRAP)
+   with batch_updater(sh):
+       format_cell_range(ws, "A1:C1", BOLD_HDR)
+       format_cell_range(ws, "A:C", NO_WRAP)
 
         for rng, fmt in zebra_ranges(len(sheet_df), weeks_series):
-            format_cell_range(w, rng, fmt)
+            format_cell_range(ws, rng, fmt)
 
         for idx, width in COL_WIDTHS.items():
-            set_column_width(w, rowcol_to_a1(1, idx)[:-1], width)
+            set_column_width(ws, rowcol_to_a1(1, idx)[:-1], width)
 
     time.sleep(0.5)
