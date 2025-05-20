@@ -4,6 +4,7 @@ import pandas as pd, gspread
 from google.oauth2.service_account import Credentials
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 from gspread_formatting import format_cell_range, CellFormat, TextFormat, CellFormat, format_cell_range
+from gspread.utils import rowcol_to_a1 
 
 
 # start of workflow credentials block
@@ -181,7 +182,7 @@ for title in targets:
 
     for col in range(total_cols, 3, -1): 
         ws.delete_columns(col)
-
+      
 
 targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
 
@@ -192,7 +193,7 @@ for title in targets:
         print(f"Лист «{title}» не найден — пропускаю")
         continue
 
-    total_cols = ws.col_count         
+    total_cols = ws.col_count                
 
     ws.unhide_columns(1, total_cols)
 
