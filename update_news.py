@@ -147,3 +147,24 @@ for title in targets:
         continue
 
     format_cell_range(ws, 'A:D', wrap_fmt)
+         
+
+targets = ["M2M", "UC", "Связь для бизнеса", "Конвергентные продукты для бизнеса"]
+
+for title in targets:
+    try:
+        ws = sh.worksheet(title)
+    except gspread.exceptions.WorksheetNotFound:
+        print(f"Лист «{title}» не найден — пропускаю")
+        continue
+
+    headers = [h.strip().lower() for h in ws.row_values(1)]
+
+    try:
+        col_idx = headers.index("направление") + 1     
+    except ValueError:
+        print(f"На «{title}» столбца «Направление» нет — пропускаю")
+        continue
+
+    ws.delete_columns(col_idx)
+    print(f"На «{title}» удалён столбец «Направление» (№{col_idx})")
