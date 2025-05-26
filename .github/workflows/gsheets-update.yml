@@ -2,8 +2,11 @@ name: Update Google Sheets
 
 on:
   schedule:
-    - cron: '8 13 * * *'
-  workflow_dispatch:
+    - cron:  '0 9 * * *'
+    - cron:  '0 16 * * *'
+    - cron:  '0 20 * * *'
+    - cron: '30 12 * * 5'
+  workflow_dispatch:        
 
 jobs:
   run-script:
@@ -25,6 +28,6 @@ jobs:
       - name: Run updater
         env:
           GSHEETS_KEY: ${{ secrets.GSHEETS_KEY }}
-          SPREAD_ID:   ${{ secrets.SPREAD_ID }}
+          SPREAD_ID:   ${{ secrets.SPREAD_ID }}   
         run: |
           python update_news.py
